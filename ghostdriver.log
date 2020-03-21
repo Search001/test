@@ -1,0 +1,12 @@
+[INFO  - 2020-03-12T07:56:36.712Z] GhostDriver - Main - running on port 11961
+[INFO  - 2020-03-12T07:56:38.917Z] Session [00e3f620-6437-11ea-8a2a-257bb0c92d48] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1","webSecurityEnabled":true}
+[INFO  - 2020-03-12T07:56:38.917Z] Session [00e3f620-6437-11ea-8a2a-257bb0c92d48] - page.customHeaders:  - {}
+[INFO  - 2020-03-12T07:56:38.917Z] Session [00e3f620-6437-11ea-8a2a-257bb0c92d48] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"2.1.1","driverName":"ghostdriver","driverVersion":"1.2.0","platform":"windows-10-32bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
+[INFO  - 2020-03-12T07:56:38.917Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: 00e3f620-6437-11ea-8a2a-257bb0c92d48
+[ERROR - 2020-03-12T07:56:40.522Z] Session [00e3f620-6437-11ea-8a2a-257bb0c92d48] - page.onError - msg: undefined
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2020-03-12T07:56:40.522Z] Session [00e3f620-6437-11ea-8a2a-257bb0c92d48] - page.onError - stack:
+  (anonymous function) (https://pagead2.googlesyndication.com/pagead/js/r20200305/r20190131/show_ads_impl.js:82)
+
+  phantomjs://platform/console++.js:263 in error
