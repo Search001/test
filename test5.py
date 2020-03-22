@@ -37,8 +37,6 @@ def detect_coord(img):
     #     y = int(pt[1])
     return z
 
-#print(detect_coord(n1))
-
 p0 = detect_coord(n0)
 p1 = detect_coord(n1)
 p2 = detect_coord(n2)
@@ -50,7 +48,7 @@ p7 = detect_coord(n7)
 p8 = detect_coord(n8)
 p9 = detect_coord(n9)
 px = p0+p1+p2+p3+p4+p5+p6+p7+p8+p9
-print(p9)
+
 #exit(0)
 x=""
 print("px = ",px)
@@ -96,10 +94,7 @@ while px:
         x = x + "9"
         p9.pop(p9.index(min(px)))
         px.pop(px.index(min(px)))
-# for i in range(21):
-#     pyautogui.moveTo(z[i])
-#     print (z[i])
-    #time.sleep(0.5)
+
 print("строка:", x)
 
 #print(detect_coord(n2))
