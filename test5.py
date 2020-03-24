@@ -22,7 +22,7 @@ n9 = cv2.imread("pic/n9.png", 0)
 #w, h = template.shape[::-1]
 
 img_gray = cv2.cvtColor(np.array(base_screen), cv2.COLOR_BGR2GRAY)
-#cv2.imshow("Название окна", img_gray)
+#cv2.imshow("Screenshot", img_gray)
 #cv2.waitKey(0)
 def detect_coord(img):
     z = []
@@ -51,8 +51,8 @@ px = p0+p1+p2+p3+p4+p5+p6+p7+p8+p9
 
 #exit(0)
 x=""
-print("px = ",px)
-print("min px = ",min(px))
+# print("px = ",px)
+# print("min px = ",min(px))
 while px:
     if min(px) in p0:
         x = x + "0"

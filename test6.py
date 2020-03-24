@@ -18,8 +18,9 @@ import numpy as np
 
 x=[[1,2],[2,3]]
 y=[[2,3],[3,4]]
-if min(y) in x:
-    print("yes")
-    print(min(y))
-    y.pop(y.index(min(y)))
-print(y)
+# if min(y) in x:
+#     print("yes")
+#     print(min(y))
+#     y.pop(y.index(min(y)))
+z = [x[0][0]+y[0][0], x[0][1]+y[0][1]]
+print(z)
