@@ -18,9 +18,11 @@ m1 = cv2.imread("pic/mine_1.png", 0)
 m2 = cv2.imread("pic/mine_2.png", 0)
 m3 = cv2.imread("pic/mine_3.png", 0)
 m4 = cv2.imread("pic/mine_4.png", 0)
+m5 = cv2.imread("pic/mine_5.png", 0)
 me = cv2.imread("pic/mine_empty.png", 0)
 mu = cv2.imread("pic/mine_unkn.png", 0)
 mf = cv2.imread("pic/mine_flag.png", 0)
+done = []
 
 # cv2.imshow("Screenshot", img_gray)
 # cv2.waitKey(0)
@@ -52,36 +54,81 @@ def detect_coord_small(img):
     #     y = int(pt[1])
     return z
 
+def lr_click():
+    pyautogui.mouseDown(button='right')
+    pyautogui.click()
+    pyautogui.mouseUp(button='right')
+
 def detect_mines(number_img):
     if number_img is m1:
         num = 1
     elif number_img is m2:
         num = 2
+    elif number_img is m3:
+        num = 3
+    elif number_img is m4:
+        num = 4
+    elif number_img is m5:
+        num = 5
     mine = detect_coord(number_img)
     for i1 in range(len(mine)):   #ищет цифры number, оценивает поле 3х3 вокруг них на наличие неоткрытых областей
-        pyautogui.moveTo(mine[i1])
-        #time.sleep(0.35)
-        around_cursor = ImageGrab.grab(bbox=(mine[i1][0]-17, mine[i1][1]-17, mine[i1][0]+31, mine[i1][1]+31))
-        global img_ar_cur
-        img_ar_cur = cv2.cvtColor(np.array(around_cursor), cv2.COLOR_BGR2GRAY)
-        print(detect_coord_small(mu))
-        cv2.imshow("Screenshot", img_ar_cur)
-        #cv2.waitKey(0)
-        if len(detect_coord_small(mu))-len(detect_coord_small(mf)) == num: #если вокруг цифры столько же неоткрытых клеток, помечает их
-            cursor = [win32gui.GetCursorPos()]
-            print("курсор", cursor)
-            print(mine[i1])
-            dcs = detect_coord_small(mu)
-            for i2 in range(len(dcs)):
-                print(app_coord[0])
+        if mine[i1] not in done:
+            pyautogui.moveTo(mine[i1])
+            #time.sleep(0.35)
+            around_cursor = ImageGrab.grab(bbox=(mine[i1][0]-17, mine[i1][1]-17, mine[i1][0]+31, mine[i1][1]+31))
+            global img_ar_cur
+            img_ar_cur = cv2.cvtColor(np.array(around_cursor), cv2.COLOR_BGR2GRAY)
+            print(detect_coord_small(mu))
+            #cv2.imshow("Screenshot", img_ar_cur)
+            #cv2.waitKey(0)
+            if len(detect_coord_small(mu)) == 0:
+                done.append(mine[i1])
+                print(done)
+            if len(detect_coord_small(mf)) == num - 1 and len(detect_coord_small(mu)) == 1: #если вокруг цифры столько же неоткрытых клеток, помечает их
+                cursor = [win32gui.GetCursorPos()]
+                print("курсор", cursor)
+                print(mine[i1])
+                dcs = detect_coord_small(mu)
+                # for i2 in range(len(dcs)): #помечает флажком
+                #     print(i2)
+                #     print(app_coord[0])
                 pyautogui.moveTo(cursor[0][0]+dcs[0][0]-17, cursor[0][1] + dcs[0][1]-17)
-                #pyautogui.moveTo(mine[i1][0]+app_coord[0][0]+13, mine[i1][1]+app_coord[0][1]+101)
-                #print("xx:", dcs[i2][0]+app_coord[0][0]+45, dcs[i2][1]+app_coord[0][1]+101)
                 pyautogui.rightClick()
-                # dcs = detect_coord_small(mu)
-                # for i3 in range (len(dcs)):
-                #
-                # pyautogui.moveTo(cursor[0][0] + dcs[0][0] - 17, cursor[0][1] + dcs[0][1] - 17)
+
+
+def open_unk(number_img):
+    if number_img is m1:
+        num = 1
+    elif number_img is m2:
+        num = 2
+    elif number_img is m3:
+        num = 3
+    elif number_img is m4:
+        num = 4
+    elif number_img is m5:
+        num = 5
+    mine = detect_coord(number_img)
+    for i1 in range(len(mine)):   #ищет цифры number, оценивает поле 3х3 вокруг них на наличие размеченных мин
+        if mine[i1] not in done:
+            pyautogui.moveTo(mine[i1])
+            #time.sleep(0.35)
+            around_cursor = ImageGrab.grab(bbox=(mine[i1][0]-17, mine[i1][1]-17, mine[i1][0]+31, mine[i1][1]+31))
+            global img_ar_cur
+            img_ar_cur = cv2.cvtColor(np.array(around_cursor), cv2.COLOR_BGR2GRAY)
+            #print(detect_coord_small(mu))
+            #cv2.imshow("Screenshot", img_ar_cur)
+            #cv2.waitKey(0)
+            if len(detect_coord_small(mf)) == num and len(detect_coord_small(mu)) > 0: #если найдено, то клик на открытие
+                lr_click()
+            if len(detect_coord_small(mf)) + len(detect_coord_small(mu)) == num and len(detect_coord_small(mu)) > 1:
+                cursor = [win32gui.GetCursorPos()]
+                dcs = detect_coord_small(mu)
+                #exit(0)
+                for u in range(len(dcs)):
+                    pyautogui.moveTo(cursor[0][0] + dcs[u][0] - 17, cursor[0][1] + dcs[u][1] - 17)
+                    pyautogui.rightClick()
+                    pyautogui.moveTo(cursor[0][0], cursor[0][1])
+
 app_coord = detect_coord(icon)
 #print(app_coord)
 
@@ -101,5 +148,25 @@ while len(detect_coord(mu)) > 478:
     pyautogui.moveTo(c[100])
     pyautogui.click()
 
-detect_mines(m1)
+while len(detect_coord(mu)) > 0:
+    print("На удаление:", done)
+    detect_mines(m1)
+    open_unk(m1)
+    detect_mines(m2)
+    open_unk(m2)
+    try:
+        detect_mines(m3)
+        open_unk(m3)
+    except:
+        print("нет 3")
+    try:
+        detect_mines(m4)
+        open_unk(m4)
+    except:
+        print("нет 4")
+    try:
+        detect_mines(m5)
+        open_unk(m5)
+    except:
+        print("нет 5")
 #print(detect_coord(n2))
