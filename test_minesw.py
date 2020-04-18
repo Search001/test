@@ -11,8 +11,6 @@ import os
 os.startfile(r'C:\Program Files (x86)\MineSweeper\winmine.exe')
 time.sleep(0.35)
 
-
-
 icon = cv2.imread("pic/mine_icon.png", 0)
 m1 = cv2.imread("pic/mine_1.png", 0)
 m2 = cv2.imread("pic/mine_2.png", 0)
@@ -24,8 +22,6 @@ mu = cv2.imread("pic/mine_unkn.png", 0)
 mf = cv2.imread("pic/mine_flag.png", 0)
 done = []
 
-# cv2.imshow("Screenshot", img_gray)
-# cv2.waitKey(0)
 def detect_coord(img):
     base_screen = ImageGrab.grab(bbox=(0, 0, 1920, 1080))
     img_gray = cv2.cvtColor(np.array(base_screen), cv2.COLOR_BGR2GRAY)
@@ -46,12 +42,8 @@ def detect_coord_small(img):
     res = cv2.matchTemplate(img_ar_cur, img, cv2.TM_CCOEFF_NORMED)
     loc = np.where(res >= 0.97)
     loc_array = np.array(loc)
-    #print (np.array(loc))
     for i in range(len(loc_array[0])):
         z.append([(loc_array[1, i]), (loc_array[0, i])])
-    # for pt in zip(*loc[::-1]):
-    #     x = int(pt[0])
-    #     y = int(pt[1])
     return z
 
 def lr_click():
@@ -74,24 +66,17 @@ def detect_mines(number_img):
     for i1 in range(len(mine)):   #ищет цифры number, оценивает поле 3х3 вокруг них на наличие неоткрытых областей
         if mine[i1] not in done:
             pyautogui.moveTo(mine[i1])
-            #time.sleep(0.35)
             around_cursor = ImageGrab.grab(bbox=(mine[i1][0]-17, mine[i1][1]-17, mine[i1][0]+31, mine[i1][1]+31))
             global img_ar_cur
             img_ar_cur = cv2.cvtColor(np.array(around_cursor), cv2.COLOR_BGR2GRAY)
-            print(detect_coord_small(mu))
+            #print(detect_coord_small(mu))
             #cv2.imshow("Screenshot", img_ar_cur)
             #cv2.waitKey(0)
             if len(detect_coord_small(mu)) == 0:
                 done.append(mine[i1])
-                print(done)
             if len(detect_coord_small(mf)) == num - 1 and len(detect_coord_small(mu)) == 1: #если вокруг цифры столько же неоткрытых клеток, помечает их
                 cursor = [win32gui.GetCursorPos()]
-                print("курсор", cursor)
-                print(mine[i1])
                 dcs = detect_coord_small(mu)
-                # for i2 in range(len(dcs)): #помечает флажком
-                #     print(i2)
-                #     print(app_coord[0])
                 pyautogui.moveTo(cursor[0][0]+dcs[0][0]-17, cursor[0][1] + dcs[0][1]-17)
                 pyautogui.rightClick()
 
@@ -111,11 +96,9 @@ def open_unk(number_img):
     for i1 in range(len(mine)):   #ищет цифры number, оценивает поле 3х3 вокруг них на наличие размеченных мин
         if mine[i1] not in done:
             pyautogui.moveTo(mine[i1])
-            #time.sleep(0.35)
             around_cursor = ImageGrab.grab(bbox=(mine[i1][0]-17, mine[i1][1]-17, mine[i1][0]+31, mine[i1][1]+31))
             global img_ar_cur
             img_ar_cur = cv2.cvtColor(np.array(around_cursor), cv2.COLOR_BGR2GRAY)
-            #print(detect_coord_small(mu))
             #cv2.imshow("Screenshot", img_ar_cur)
             #cv2.waitKey(0)
             if len(detect_coord_small(mf)) == num and len(detect_coord_small(mu)) > 0: #если найдено, то клик на открытие
@@ -123,22 +106,12 @@ def open_unk(number_img):
             if len(detect_coord_small(mf)) + len(detect_coord_small(mu)) == num and len(detect_coord_small(mu)) > 1:
                 cursor = [win32gui.GetCursorPos()]
                 dcs = detect_coord_small(mu)
-                #exit(0)
                 for u in range(len(dcs)):
                     pyautogui.moveTo(cursor[0][0] + dcs[u][0] - 17, cursor[0][1] + dcs[u][1] - 17)
                     pyautogui.rightClick()
                     pyautogui.moveTo(cursor[0][0], cursor[0][1])
 
 app_coord = detect_coord(icon)
-#print(app_coord)
-
-#base_screen = ImageGrab.grab(bbox = (app_coord[0][0]+13, app_coord[0][1]+101, app_coord[0][0]+494, app_coord[0][1]+358))
-#img_gray = cv2.cvtColor(np.array(base_screen), cv2.COLOR_BGR2GRAY)
-# cv2.imshow("Screenshot", img_gray)
-# cv2.waitKey(0)
-#print(z)
-
-
 
 print(len(detect_coord(mu)))
 
@@ -169,4 +142,4 @@ while len(detect_coord(mu)) > 0:
         open_unk(m5)
     except:
         print("нет 5")
-#print(detect_coord(n2))
+
