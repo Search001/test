@@ -6,6 +6,8 @@ bomb = 99
 
 first_move = 1
 mas_cl = [['7'] * (col) for i in range(row)]
+mas_cl_compare_to_zero = []
+mas_cl_compare_to_self = []
 
 import numpy as np
 from PIL import ImageGrab
@@ -14,6 +16,7 @@ import pyautogui
 import win32api, win32con, win32gui, win32com.client
 import time
 import os
+import copy
 
 #доска 16х30
 
@@ -26,6 +29,8 @@ m2 = cv2.imread("pic/mine_2.png", 0)
 m3 = cv2.imread("pic/mine_3.png", 0)
 m4 = cv2.imread("pic/mine_4.png", 0)
 m5 = cv2.imread("pic/mine_5.png", 0)
+m6 = cv2.imread("pic/mine_6.png", 0)
+m7 = cv2.imread("pic/mine_7.png", 0)
 me = cv2.imread("pic/mine_empty.png", 0)
 mu = cv2.imread("pic/mine_unkn.png", 0)
 mf = cv2.imread("pic/mine_flag.png", 0)
@@ -72,202 +77,52 @@ def show_desk():
         print(*mas_cl[i], '|', i)
 
 
-def new_desk():
-    global mas
-    mas = [[0] * (col) for i in range(row)]
-
-    for i in range(bomb):
-        rndx = random.randint(0, row - 1)
-        rndy = random.randint(0, col - 1)
-        while mas[rndx][rndy] == '*':
-            rndx = random.randint(0, row - 1)
-            rndy = random.randint(0, col - 1)
-        mas[rndx][rndy] = '*'
-
+def to_zero():
     for i in range(0, col):
         for i2 in range(0, row):
-            if mas[i2][i] == 0:
+            if mas_cl[i2][i] == "B":
+                mas_cl[i2][i] = 0
                 try:
-                    if i2 > 0 and i > 0 and mas[i2 - 1][i - 1] == '*':
-                        mas[i2][i] += 1
+                    if i2 > 0 and i > 0 and mas_cl[i2 - 1][i - 1] > 0:
+                        mas_cl[i2 - 1][i - 1] -= 1
                 except:
                     pass
                 try:
-                    if i2 > 0 and mas[i2 - 1][i] == '*':
-                        mas[i2][i] += 1
+                    if i2 > 0 and mas_cl[i2 - 1][i] > 0:
+                        mas_cl[i2 - 1][i] -= 1
                 except:
                     pass
                 try:
-                    if i2 > 0 and mas[i2 - 1][i + 1] == '*':
-                        mas[i2][i] += 1
+                    if i2 > 0 and mas_cl[i2 - 1][i + 1] > 0:
+                        mas_cl[i2 - 1][i + 1] -= 1
                 except:
                     pass
                 try:
-                    if i > 0 and mas[i2][i - 1] == '*':
-                        mas[i2][i] += 1
+                    if i > 0 and mas_cl[i2][i - 1] > 0:
+                        mas_cl[i2][i - 1] -= 1
                 except:
                     pass
                 try:
-                    if mas[i2][i + 1] == '*':
-                        mas[i2][i] += 1
+                    if mas_cl[i2][i + 1] > 0:
+                        mas_cl[i2][i + 1] -= 1
                 except:
                     pass
                 try:
-                    if i > 0 and mas[i2 + 1][i - 1] == '*':
-                        mas[i2][i] += 1
+                    if i > 0 and mas_cl[i2 + 1][i - 1] > 0:
+                        mas_cl[i2 + 1][i - 1] -= 1
                 except:
                     pass
                 try:
-                    if mas[i2 + 1][i] == '*':
-                        mas[i2][i] += 1
+                    if mas_cl[i2 + 1][i] > 0:
+                        mas_cl[i2 + 1][i] -= 1
                 except:
                     pass
                 try:
-                    if mas[i2 + 1][i + 1] == '*':
-                        mas[i2][i] += 1
+                    if mas_cl[i2 + 1][i + 1] > 0:
+                        mas_cl[i2 + 1][i + 1] -= 1
                 except:
                     pass
-    for i in range(row):
-        print(*mas[i])
 
-def click(x, y):
-    cell_unk = 0
-    cell_mark = 0
-    global first_move
-    if first_move == 1:
-        while mas[x][y] != 0:
-            print(mas[x][y])
-            new_desk()
-    first_move = 0
-    if mas[x][y] != '*' or mas[x][y] != 0:
-        mas_cl[x][y] = mas[x][y]
-    if mas[x][y] == '*':
-        mas_cl[x][y] = mas[x][y]
-        for i in range(row):
-            print(*mas_cl[i])
-        print('Game over')
-        exit(0)
-    if mas[x][y] == 0:
-        mas_cl[x][y] = mas[x][y]
-        zeros = []
-        zeros2 = []
-        non_zeros = []
-        zeros.append([x, y])
-        print()
-        while zeros:
-            for n, i in enumerate(zeros):
-                if i not in zeros2:
-                    x = i[0]
-                    y = i[1]
-                    try:
-                        if x > 0 and y > 0 and mas[x - 1][y - 1] == 0:
-                            zeros.append([x - 1, y - 1])
-                    except:
-                        pass
-                    try:
-                        if x > 0 and mas[x - 1][y] == 0:
-                            zeros.append([x - 1, y])
-                    except:
-                        pass
-                    try:
-                        if x > 0 and mas[x - 1][y + 1] == 0:
-                            zeros.append([x - 1, y + 1])
-                    except:
-                        pass
-                    try:
-                        if y > 0 and mas[x][y - 1] == 0:
-                            zeros.append([x, y - 1])
-                    except:
-                        pass
-                    try:
-                        if mas[x][y + 1] == 0:
-                            zeros.append([x, y + 1])
-                    except:
-                        pass
-                    try:
-                        if y > 0 and mas[x + 1][y - 1] == 0:
-                            zeros.append([x + 1, y - 1])
-                    except:
-                        pass
-                    try:
-                        if mas[x + 1][y] == 0:
-                            zeros.append([x + 1, y])
-                    except:
-                        pass
-                    try:
-                        if mas[x + 1][y + 1] == 0:
-                            zeros.append([x + 1, y + 1])
-                    except:
-                        pass
-
-                    try:
-                        if x > 0 and y > 0 and mas[x - 1][y - 1] != 0:
-                            non_zeros.append([x - 1, y - 1])
-                    except:
-                        pass
-                    try:
-                        if x > 0 and mas[x - 1][y] != 0:
-                            non_zeros.append([x - 1, y])
-                    except:
-                        pass
-                    try:
-                        if x > 0 and mas[x - 1][y + 1] != 0:
-                            non_zeros.append([x - 1, y + 1])
-                    except:
-                        pass
-                    try:
-                        if y > 0 and mas[x][y - 1] != 0:
-                            non_zeros.append([x, y - 1])
-                    except:
-                        pass
-                    try:
-                        if mas[x][y + 1] != 0:
-                            non_zeros.append([x, y + 1])
-                    except:
-                        pass
-                    try:
-                        if y > 0 and mas[x + 1][y - 1] != 0:
-                            non_zeros.append([x + 1, y - 1])
-                    except:
-                        pass
-                    try:
-                        if mas[x + 1][y] != 0:
-                            non_zeros.append([x + 1, y])
-                    except:
-                        pass
-                    try:
-                        if mas[x + 1][y + 1] != 0:
-                            non_zeros.append([x + 1, y + 1])
-                    except:
-                        pass
-                    zeros2.append(i)
-                zeros.pop(n)
-        for i in zeros2:
-            x = i[0]
-            y = i[1]
-            mas_cl[x][y] = mas[x][y]
-        for i in non_zeros:
-            x = i[0]
-            y = i[1]
-            mas_cl[x][y] = mas[x][y]
-        zeros2 = []
-    show_desk()
-    for i in range(row):
-        for i2 in range(col):
-            if mas_cl[i][i2] == '#':
-                cell_unk += 1
-            if mas_cl[i][i2] == 'B':
-                cell_mark += 1
-    if cell_unk + cell_mark == bomb:
-        print('You win!!!')
-        exit(0)
-
-
-
-
-# x = 5
-# y = 5
-# click(x, y)
 
 
 def find(i2, i, num):
@@ -326,57 +181,142 @@ def find(i2, i, num):
 
 
 def mark(i, i2, num):
+
     unk_cell = find(i, i2, '#')
     marks = find(i, i2, 'B')
     if mas_cl[i][i2] == num and len(unk_cell) > 0 and (len(unk_cell) + len(marks)) == num:
-        # print(unk_cell)
+        # стандартная разметка
         for n, cell in enumerate(unk_cell):
             mas_cl[unk_cell[n][0]][unk_cell[n][1]] = 'B'
             pyautogui.moveTo(unk_cell[n][1]*16+icon_pos[0][0]+13, unk_cell[n][0]*16+icon_pos[0][1]+101)
             pyautogui.rightClick()
-    if mas_cl[i][i2] == 2 and len(unk_cell) == 3 and len(marks) == 0 and mas_cl[i - 1][i2] == 1 and mas_cl[i + 1][
-        i2] == 1 and unk_cell[0][1] == unk_cell[1][1] == unk_cell[2][1]:
+    if mas_cl[i][i2] == 2 \
+            and len(unk_cell) == 3 \
+            and len(marks) == 0 \
+            and mas_cl[i - 1][i2] == 1 \
+            and mas_cl[i + 1][i2] == 1 \
+            and unk_cell[0][1] == unk_cell[1][1] == unk_cell[2][1]:
+        #121 в ряд по вертикали
         for n in range(0, 3, 2):
             mas_cl[unk_cell[n][0]][unk_cell[n][1]] = 'B'
             pyautogui.moveTo(unk_cell[n][1] * 16 + icon_pos[0][0] + 13, unk_cell[n][0] * 16 + icon_pos[0][1] + 101)
             pyautogui.rightClick()
-    if mas_cl[i][i2] == 2 and len(unk_cell) == 3 and len(marks) == 0 and mas_cl[i][i2 - 1] == 1 and mas_cl[i][
-        i2 + 1] == 1 and unk_cell[0][0] == unk_cell[1][0] == unk_cell[2][0]:
+    if mas_cl[i][i2] == 2 \
+            and len(unk_cell) == 3 \
+            and len(marks) == 0 \
+            and mas_cl[i][i2 - 1] == 1 \
+            and mas_cl[i][i2 + 1] == 1 \
+            and unk_cell[0][0] == unk_cell[1][0] == unk_cell[2][0]:
+        #121 в ряд по горизонтали
         for n in range(0, 3, 2):
             mas_cl[unk_cell[n][0]][unk_cell[n][1]] = 'B'
             pyautogui.moveTo(unk_cell[n][1] * 16 + icon_pos[0][0] + 13, unk_cell[n][0] * 16 + icon_pos[0][1] + 101)
             pyautogui.rightClick()
+    try:
+        if mas_cl[i][i2] == 2 \
+                and len(unk_cell) == 3 \
+                and len(marks) == 0 \
+                and mas_cl[i - 1][i2] == 1 \
+                and mas_cl[i + 1][i2] == 2 \
+                and mas_cl[i + 2][i2] == 1 \
+                and unk_cell[0][1] == unk_cell[1][1] == unk_cell[2][1]:
+            #1221 в ряд по вертикали
+            for n in range(1, 3, 1):
+                mas_cl[unk_cell[n][0]][unk_cell[n][1]] = 'B'
+                pyautogui.moveTo(unk_cell[n][1] * 16 + icon_pos[0][0] + 13, unk_cell[n][0] * 16 + icon_pos[0][1] + 101)
+                pyautogui.rightClick()
+    except:
+        pass
+    try:
+        if mas_cl[i][i2] == 2 \
+                and len(unk_cell) == 3 \
+                and len(marks) == 0 \
+                and mas_cl[i][i2 - 1] == 1 \
+                and mas_cl[i][i2 + 1] == 2 \
+                and mas_cl[i][i2 + 2] == 1 \
+                and unk_cell[0][0] == unk_cell[1][0] == unk_cell[2][0]:
+            #1221 в ряд по горизонтали
+            for n in range(1, 3, 1):
+                mas_cl[unk_cell[n][0]][unk_cell[n][1]] = 'B'
+                pyautogui.moveTo(unk_cell[n][1] * 16 + icon_pos[0][0] + 13, unk_cell[n][0] * 16 + icon_pos[0][1] + 101)
+                pyautogui.rightClick()
+    except:
+        pass
+    if mas_cl[i][i2] == 1 \
+            and i == 1 \
+            and len(unk_cell) == 3 \
+            and len(marks) == 0 \
+            and mas_cl[i - 1][i2] == 1 \
+            and mas_cl[i + 1][i2] == 1 \
+            and mas_cl[i + 2][i2] == 0 \
+            and mas_cl[i + 2][i2+1] != "#" \
+            and mas_cl[i + 2][i2+1] != "#" \
+            and unk_cell[0][1] == unk_cell[1][1] == unk_cell[2][1]:
+        # 111 в ряд по вертикали с начала
+        mas_cl[unk_cell[1][0]][unk_cell[1][1]] = 'B'
+        pyautogui.moveTo(unk_cell[1][1] * 16 + icon_pos[0][0] + 13, unk_cell[1][0] * 16 + icon_pos[0][1] + 101)
+        pyautogui.rightClick()
+    if mas_cl[i][i2] == 1 \
+            and i == row-2 \
+            and len(unk_cell) == 3 \
+            and len(marks) == 0 \
+            and mas_cl[i - 1][i2] == 1 \
+            and mas_cl[i + 1][i2] == 1 \
+            and mas_cl[i - 2][i2] == 0 \
+            and mas_cl[i - 2][i2-1] != "#" \
+            and mas_cl[i - 2][i2+1] != "#" \
+            and unk_cell[0][1] == unk_cell[1][1] == unk_cell[2][1]:
+        # 111 в ряд по вертикали с конца
+        mas_cl[unk_cell[1][0]][unk_cell[1][1]] = 'B'
+        pyautogui.moveTo(unk_cell[1][1] * 16 + icon_pos[0][0] + 13, unk_cell[1][0] * 16 + icon_pos[0][1] + 101)
+        pyautogui.rightClick()
+    if mas_cl[i][i2] == 1 \
+            and i2 == 1 \
+            and len(unk_cell) == 3 \
+            and len(marks) == 0 \
+            and mas_cl[i][i2-1] == 1 \
+            and mas_cl[i][i2+1] == 1 \
+            and mas_cl[i][i2+2] == 0 \
+            and mas_cl[i-1][i2+2] != "#" \
+            and mas_cl[i+1][i2+2] != "#" \
+            and unk_cell[0][0] == unk_cell[1][0] == unk_cell[2][0]:
+        # 111 в ряд по горизонтали с начала
+        mas_cl[unk_cell[1][0]][unk_cell[1][1]] = 'B'
+        pyautogui.moveTo(unk_cell[1][1] * 16 + icon_pos[0][0] + 13, unk_cell[1][0] * 16 + icon_pos[0][1] + 101)
+    if mas_cl[i][i2] == 1 and i2 == col-2 \
+            and len(unk_cell) == 3 \
+            and len(marks) == 0 \
+            and mas_cl[i][i2-1] == 1 \
+            and mas_cl[i][i2+1] == 1 \
+            and mas_cl[i][i2-2] == 0 \
+            and mas_cl[i-1][i2-2] != "#" \
+            and mas_cl[i+1][i2-2] != "#" \
+            and unk_cell[0][0] == unk_cell[1][0] == unk_cell[2][0]:
+        # 111 в ряд по горизонтали с конца
+        mas_cl[unk_cell[1][0]][unk_cell[1][1]] = 'B'
+        pyautogui.moveTo(unk_cell[1][1] * 16 + icon_pos[0][0] + 13, unk_cell[1][0] * 16 + icon_pos[0][1] + 101)
+
     # print(unk_cell)
     # print('!!!!')
     # exit(0)
 
 
 def open(i, i2, num):
+    cur_time = time.time()
     unk_cell = find(i, i2, '#')
     marks = find(i, i2, 'B')
     if mas_cl[i][i2] == num and len(unk_cell) > 0 and len(marks) == num:
         for n, cell in enumerate(unk_cell):
-            pyautogui.moveTo(unk_cell[n][1] * 16 + icon_pos[0][0] + 13, unk_cell[n][0] * 16 + icon_pos[0][1] + 101)
-            pyautogui.click()
-
-
-# for z in range(1000):
-#     for i in range(row):
-#         for i2 in range(col):
-#             if mas_cl[i][i2] != 0 and mas_cl[i][i2] != '#' and mas_cl[i][i2] != 'B':
-#                 mark(i, i2, 1)
-#                 open(i, i2, 1)
-#                 mark(i, i2, 2)
-#                 open(i, i2, 2)
-#                 mark(i, i2, 3)
-#                 open(i, i2, 3)
-#                 mark(i, i2, 4)
-#                 open(i, i2, 4)
-
+            x = unk_cell[n][1] * 16 + icon_pos[0][0] + 13
+            y = unk_cell[n][0] * 16 + icon_pos[0][1] + 101
+            win32api.SetCursorPos((x, y))
+            win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, x, y, 0, 0)
+            win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, x, y, 0, 0)
+            # pyautogui.moveTo(unk_cell[n][1] * 16 + icon_pos[0][0] + 13, unk_cell[n][0] * 16 + icon_pos[0][1] + 101)
+            # pyautogui.click()
+    if time.time() - cur_time > 0:
+        print(time.time() - cur_time)
 show_desk()
-
-cur_time = time.time()
-
 
 def update():
     c = [mu, mf, m1, m2, m3, m4, m5]
@@ -412,7 +352,7 @@ def update():
 
 update()
 show_desk()
-print(time.time() - cur_time)
+
 
 while len(detect_coord(mu)) > 478:
     pyautogui.press("f2")
@@ -425,10 +365,19 @@ while len(detect_coord(mu)) > 478:
 update()
 show_desk()
 
-for z in range(40):
+while mas_cl_compare_to_self != mas_cl:
+
+
+    if mas_cl_compare_to_zero == mas_cl:
+        mas_cl_compare_to_self = copy.deepcopy(mas_cl)
+        print("TO ZERO!")
+        to_zero()
+        show_desk()
+    mas_cl_compare_to_zero = copy.deepcopy(mas_cl)
     for i in range(row):
         for i2 in range(col):
             if mas_cl[i][i2] != 0 and mas_cl[i][i2] != '#' and mas_cl[i][i2] != 'B':
+
                 mark(i, i2, 1)
                 open(i, i2, 1)
                 mark(i, i2, 2)
@@ -439,7 +388,13 @@ for z in range(40):
                 open(i, i2, 4)
                 mark(i, i2, 5)
                 open(i, i2, 5)
+                mark(i, i2, 6)
+                open(i, i2, 6)
+                mark(i, i2, 7)
+                open(i, i2, 7)
+
     update()
-    show_desk()
-    print(z)
+    #show_desk()
+
+
 show_desk()
