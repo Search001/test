@@ -19,7 +19,9 @@ import os
 import copy
 
 #доска 16х30
-
+time.sleep(5)
+pyautogui.moveTo(417,1060)
+pyautogui.click()
 os.startfile(r'C:\Program Files (x86)\MineSweeper\winmine.exe')
 time.sleep(0.35)
 
@@ -36,6 +38,17 @@ mu = cv2.imread("pic/mine_unkn.png", 0)
 mf = cv2.imread("pic/mine_flag.png", 0)
 
 convert_coord = []
+
+def click(x,y):
+    win32api.SetCursorPos((x,y))
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,x,y,0,0)
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,x,y,0,0)
+
+def rclick(x,y):
+    win32api.SetCursorPos((x,y))
+    win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTDOWN,x,y,0,0)
+    win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTUP,x,y,0,0)
+
 
 def detect_icon():
     base_screen = ImageGrab.grab(bbox=(0, 0, 1920, 1080))
@@ -75,7 +88,6 @@ def show_desk():
     print('-' * (col * 2 - 1))
     for i in range(row):
         print(*mas_cl[i], '|', i)
-
 
 def to_zero():
     for i in range(0, col):
@@ -181,15 +193,15 @@ def find(i2, i, num):
 
 
 def mark(i, i2, num):
-
     unk_cell = find(i, i2, '#')
     marks = find(i, i2, 'B')
     if mas_cl[i][i2] == num and len(unk_cell) > 0 and (len(unk_cell) + len(marks)) == num:
         # стандартная разметка
         for n, cell in enumerate(unk_cell):
             mas_cl[unk_cell[n][0]][unk_cell[n][1]] = 'B'
-            pyautogui.moveTo(unk_cell[n][1]*16+icon_pos[0][0]+13, unk_cell[n][0]*16+icon_pos[0][1]+101)
-            pyautogui.rightClick()
+            rclick(unk_cell[n][1]*16+icon_pos[0][0]+13, unk_cell[n][0]*16+icon_pos[0][1]+101)
+            # pyautogui.moveTo(unk_cell[n][1]*16+icon_pos[0][0]+13, unk_cell[n][0]*16+icon_pos[0][1]+101)
+            # pyautogui.rightClick()
     if mas_cl[i][i2] == 2 \
             and len(unk_cell) == 3 \
             and len(marks) == 0 \
@@ -199,8 +211,7 @@ def mark(i, i2, num):
         #121 в ряд по вертикали
         for n in range(0, 3, 2):
             mas_cl[unk_cell[n][0]][unk_cell[n][1]] = 'B'
-            pyautogui.moveTo(unk_cell[n][1] * 16 + icon_pos[0][0] + 13, unk_cell[n][0] * 16 + icon_pos[0][1] + 101)
-            pyautogui.rightClick()
+            rclick(unk_cell[n][1] * 16 + icon_pos[0][0] + 13, unk_cell[n][0] * 16 + icon_pos[0][1] + 101)
     if mas_cl[i][i2] == 2 \
             and len(unk_cell) == 3 \
             and len(marks) == 0 \
@@ -210,8 +221,7 @@ def mark(i, i2, num):
         #121 в ряд по горизонтали
         for n in range(0, 3, 2):
             mas_cl[unk_cell[n][0]][unk_cell[n][1]] = 'B'
-            pyautogui.moveTo(unk_cell[n][1] * 16 + icon_pos[0][0] + 13, unk_cell[n][0] * 16 + icon_pos[0][1] + 101)
-            pyautogui.rightClick()
+            rclick(unk_cell[n][1] * 16 + icon_pos[0][0] + 13, unk_cell[n][0] * 16 + icon_pos[0][1] + 101)
     try:
         if mas_cl[i][i2] == 2 \
                 and len(unk_cell) == 3 \
@@ -223,8 +233,7 @@ def mark(i, i2, num):
             #1221 в ряд по вертикали
             for n in range(1, 3, 1):
                 mas_cl[unk_cell[n][0]][unk_cell[n][1]] = 'B'
-                pyautogui.moveTo(unk_cell[n][1] * 16 + icon_pos[0][0] + 13, unk_cell[n][0] * 16 + icon_pos[0][1] + 101)
-                pyautogui.rightClick()
+                rclick(unk_cell[n][1] * 16 + icon_pos[0][0] + 13, unk_cell[n][0] * 16 + icon_pos[0][1] + 101)
     except:
         pass
     try:
@@ -238,8 +247,7 @@ def mark(i, i2, num):
             #1221 в ряд по горизонтали
             for n in range(1, 3, 1):
                 mas_cl[unk_cell[n][0]][unk_cell[n][1]] = 'B'
-                pyautogui.moveTo(unk_cell[n][1] * 16 + icon_pos[0][0] + 13, unk_cell[n][0] * 16 + icon_pos[0][1] + 101)
-                pyautogui.rightClick()
+                rclick(unk_cell[n][1] * 16 + icon_pos[0][0] + 13, unk_cell[n][0] * 16 + icon_pos[0][1] + 101)
     except:
         pass
     if mas_cl[i][i2] == 1 \
@@ -254,8 +262,7 @@ def mark(i, i2, num):
             and unk_cell[0][1] == unk_cell[1][1] == unk_cell[2][1]:
         # 111 в ряд по вертикали с начала
         mas_cl[unk_cell[1][0]][unk_cell[1][1]] = 'B'
-        pyautogui.moveTo(unk_cell[1][1] * 16 + icon_pos[0][0] + 13, unk_cell[1][0] * 16 + icon_pos[0][1] + 101)
-        pyautogui.rightClick()
+        rclick(unk_cell[1][1] * 16 + icon_pos[0][0] + 13, unk_cell[1][0] * 16 + icon_pos[0][1] + 101)
     if mas_cl[i][i2] == 1 \
             and i == row-2 \
             and len(unk_cell) == 3 \
@@ -268,8 +275,7 @@ def mark(i, i2, num):
             and unk_cell[0][1] == unk_cell[1][1] == unk_cell[2][1]:
         # 111 в ряд по вертикали с конца
         mas_cl[unk_cell[1][0]][unk_cell[1][1]] = 'B'
-        pyautogui.moveTo(unk_cell[1][1] * 16 + icon_pos[0][0] + 13, unk_cell[1][0] * 16 + icon_pos[0][1] + 101)
-        pyautogui.rightClick()
+        rclick(unk_cell[1][1] * 16 + icon_pos[0][0] + 13, unk_cell[1][0] * 16 + icon_pos[0][1] + 101)
     if mas_cl[i][i2] == 1 \
             and i2 == 1 \
             and len(unk_cell) == 3 \
@@ -282,7 +288,7 @@ def mark(i, i2, num):
             and unk_cell[0][0] == unk_cell[1][0] == unk_cell[2][0]:
         # 111 в ряд по горизонтали с начала
         mas_cl[unk_cell[1][0]][unk_cell[1][1]] = 'B'
-        pyautogui.moveTo(unk_cell[1][1] * 16 + icon_pos[0][0] + 13, unk_cell[1][0] * 16 + icon_pos[0][1] + 101)
+        rclick(unk_cell[1][1] * 16 + icon_pos[0][0] + 13, unk_cell[1][0] * 16 + icon_pos[0][1] + 101)
     if mas_cl[i][i2] == 1 and i2 == col-2 \
             and len(unk_cell) == 3 \
             and len(marks) == 0 \
@@ -294,7 +300,7 @@ def mark(i, i2, num):
             and unk_cell[0][0] == unk_cell[1][0] == unk_cell[2][0]:
         # 111 в ряд по горизонтали с конца
         mas_cl[unk_cell[1][0]][unk_cell[1][1]] = 'B'
-        pyautogui.moveTo(unk_cell[1][1] * 16 + icon_pos[0][0] + 13, unk_cell[1][0] * 16 + icon_pos[0][1] + 101)
+        rclick(unk_cell[1][1] * 16 + icon_pos[0][0] + 13, unk_cell[1][0] * 16 + icon_pos[0][1] + 101)
 
     # print(unk_cell)
     # print('!!!!')
@@ -309,9 +315,7 @@ def open(i, i2, num):
         for n, cell in enumerate(unk_cell):
             x = unk_cell[n][1] * 16 + icon_pos[0][0] + 13
             y = unk_cell[n][0] * 16 + icon_pos[0][1] + 101
-            win32api.SetCursorPos((x, y))
-            win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, x, y, 0, 0)
-            win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, x, y, 0, 0)
+            click(x, y)
             # pyautogui.moveTo(unk_cell[n][1] * 16 + icon_pos[0][0] + 13, unk_cell[n][0] * 16 + icon_pos[0][1] + 101)
             # pyautogui.click()
     if time.time() - cur_time > 0:
@@ -319,7 +323,7 @@ def open(i, i2, num):
 show_desk()
 
 def update():
-    c = [mu, mf, m1, m2, m3, m4, m5]
+    c = [mu, mf, m1, m2, m3, m4, m5, m6, m7]
     convert_coord = []
     for cell in c:
         if cell is mu:
@@ -336,6 +340,10 @@ def update():
             sym = 4
         elif cell is m5:
             sym = 5
+        elif cell is m6:
+            sym = 6
+        elif cell is m7:
+            sym = 7
         unk_coord = (detect_coord(cell))
 
         for i in range(len(unk_coord)):
@@ -353,48 +361,49 @@ def update():
 update()
 show_desk()
 
-
-while len(detect_coord(mu)) > 478:
-    pyautogui.press("f2")
-    ce = detect_coord(mu)
-
-    pyautogui.moveTo(ce[100][0]+icon_pos[0][0]+13, ce[100][1]+icon_pos[0][1]+101)
-    pyautogui.click()
-
-
-update()
-show_desk()
-
-while mas_cl_compare_to_self != mas_cl:
-
-
-    if mas_cl_compare_to_zero == mas_cl:
-        mas_cl_compare_to_self = copy.deepcopy(mas_cl)
-        print("TO ZERO!")
-        to_zero()
-        show_desk()
-    mas_cl_compare_to_zero = copy.deepcopy(mas_cl)
-    for i in range(row):
-        for i2 in range(col):
-            if mas_cl[i][i2] != 0 and mas_cl[i][i2] != '#' and mas_cl[i][i2] != 'B':
-
-                mark(i, i2, 1)
-                open(i, i2, 1)
-                mark(i, i2, 2)
-                open(i, i2, 2)
-                mark(i, i2, 3)
-                open(i, i2, 3)
-                mark(i, i2, 4)
-                open(i, i2, 4)
-                mark(i, i2, 5)
-                open(i, i2, 5)
-                mark(i, i2, 6)
-                open(i, i2, 6)
-                mark(i, i2, 7)
-                open(i, i2, 7)
+def new_game():
+    mas_cl_compare_to_zero = []
+    mas_cl_compare_to_self = []
+    while len(detect_coord(mu)) > row * col - 2:
+        pyautogui.press("f2")
+        ce = detect_coord(mu)
+        click(ce[row*col//3][0] + icon_pos[0][0] + 13, ce[row*col//3][1] + icon_pos[0][1] + 101)
 
     update()
-    #show_desk()
+    show_desk()
+
+    while mas_cl_compare_to_self != mas_cl:
+        if mas_cl_compare_to_zero == mas_cl:
+            mas_cl_compare_to_self = copy.deepcopy(mas_cl)
+            print("TO ZERO!")
+            to_zero()
+            show_desk()
+        mas_cl_compare_to_zero = copy.deepcopy(mas_cl)
+        for i in range(row):
+            for i2 in range(col):
+                if mas_cl[i][i2] != 0 and mas_cl[i][i2] != '#' and mas_cl[i][i2] != 'B':
+
+                    mark(i, i2, 1)
+                    open(i, i2, 1)
+                    mark(i, i2, 2)
+                    open(i, i2, 2)
+                    mark(i, i2, 3)
+                    open(i, i2, 3)
+                    mark(i, i2, 4)
+                    open(i, i2, 4)
+                    mark(i, i2, 5)
+                    open(i, i2, 5)
+                    mark(i, i2, 6)
+                    open(i, i2, 6)
+                    mark(i, i2, 7)
+                    open(i, i2, 7)
+
+        update()
+        #show_desk()
 
 
-show_desk()
+    show_desk()
+
+while len(detect_coord(mu)) > 0:
+    pyautogui.press("f2")
+    new_game()
